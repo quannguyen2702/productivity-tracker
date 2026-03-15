@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Productivity Tracker - PMAX</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#0d1526;color:#e2e8f0;min-height:100vh}
+.page{max-width:1040px;margin:0 auto;padding:1.75rem 1.5rem}
+.hdr{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:1.5rem;border-bottom:1px solid rgba(255,255,255,.07);padding-bottom:1.25rem}
+.hdr-tag{font-size:10px;font-weight:700;letter-spacing:.14em;color:#60a5fa;text-transform:uppercase;margin-bottom:5px}
+.hdr-title{font-size:22px;font-weight:700;color:#fff}
+.hdr-meta{font-size:11px;color:rgba(255,255,255,.3);text-align:right;line-height:1.8}
+.picker{background:#131e33;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:14px 18px;margin-bottom:1.25rem}
+.picker-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.mode-btns{display:flex;gap:5px}
+.mbtn{font-size:11px;font-weight:700;padding:6px 14px;border-radius:7px;border:1px solid rgba(255,255,255,.1);cursor:pointer;background:transparent;color:rgba(255,255,255,.4);font-family:'Inter',sans-serif;transition:all .15s}
+.mbtn:hover{color:rgba(255,255,255,.7)}
+.mbtn.on{background:rgba(96,165,250,.2);border-color:#60a5fa;color:#60a5fa}
+.pills{display:flex;gap:6px;flex-wrap:wrap}
+.ppill{font-size:11px;font-weight:600;padding:5px 12px;border-radius:7px;border:1px solid rgba(255,255,255,.08);cursor:pointer;background:transparent;color:rgba(255,255,255,.35);font-family:'Inter',sans-serif;white-space:nowrap}
+.ppill:hover{color:rgba(255,255,255,.7)}
+.ppill.on{background:rgba(96,165,250,.18);border-color:#60a5fa;color:#60a5fa}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+.mc{border-radius:12px;padding:16px 18px;position:relative}
+.mc-deep{background:#152e22}.mc-meet{background:#111c36}.mc-score{background:#241b0e}.mc-other{background:#1c1530}
+.mc-bar{width:3px;height:32px;border-radius:0 2px 2px 0;position:absolute;left:0;top:50%;transform:translateY(-50%)}
+.mc-lbl{font-size:10px;font-weight:700;text-transform:uppercase;opacity:.45;margin-bottom:6px;padding-left:12px}
+.mc-val{font-size:30px;font-weight:700;line-height:1;margin-bottom:3px;padding-left:12px}
+.mc-sub{font-size:10px;opacity:.38;line-height:1.5;padding-left:12px}
+.sec-lbl{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#60a5fa;margin-bottom:8px;margin-top:4px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.card{background:#131e33;border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:16px 18px;margin-bottom:10px}
+.card-title{font-size:10px;font-weight:700;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:13px}
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.li{display:flex;align-items:center;gap:5px;font-size:11px;color:rgba(255,255,255,.4)}
+.ld{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.pb-row{display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px}
+.pb-lbl{color:rgba(255,255,255,.5)}.pb-val{font-weight:600}
+.pb-bg{height:4px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden;margin-bottom:9px}
+.pb-fill{height:100%;border-radius:3px}
+.score-num{font-size:46px;font-weight:700;line-height:1;margin-bottom:2px}
+.score-sub{font-size:11px;color:rgba(255,255,255,.3);margin-bottom:14px}
+.tl-row{display:flex;align-items:center;gap:9px;margin-bottom:5px}
+.tl-lbl{font-size:10px;font-weight:600;color:rgba(255,255,255,.3);width:52px;flex-shrink:0;text-align:right}
+.tl-track{flex:1;position:relative;height:20px;background:rgba(255,255,255,.04);border-radius:3px;overflow:hidden}
+.tl-blk{position:absolute;height:100%;border-radius:2px;opacity:.88}
+.tl-hrs{display:flex;justify-content:space-between;padding-left:61px;font-size:9px;color:rgba(255,255,255,.15);margin-top:3px}
+.ins{border-radius:9px;padding:12px 14px;margin-bottom:7px;display:flex;gap:10px;align-items:flex-start}
+.ins-icon{width:24px;height:24px;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+.ins-ttl{font-size:12px;font-weight:600;margin-bottom:3px}
+.ins-txt{font-size:11px;line-height:1.65;opacity:.7}
+.wc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
+.wc{background:#131e33;border:1px solid rgba(255,255,255,.06);border-radius:11px;padding:12px 14px}
+.wc-lbl{font-size:10px;font-weight:700;color:rgba(255,255,255,.35);margin-bottom:7px}
+.wc-score{font-size:22px;font-weight:700;margin-bottom:3px}
+.wc-bar{height:3px;background:rgba(255,255,255,.07);border-radius:2px;overflow:hidden;margin-bottom:5px}
+.wc-fill{height:100%;border-radius:2px}
+.wc-stat{font-size:10px;color:rgba(255,255,255,.32);line-height:1.6}
+.trend-up{color:#34d399}.trend-dn{color:#f87171}.trend-eq{color:rgba(255,255,255,.35)}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:11px}
+.tb{font-size:10px;font-weight:700;padding:4px 9px;border-radius:6px;border:1px solid rgba(255,255,255,.08);cursor:pointer;background:transparent;color:rgba(255,255,255,.35);font-family:'Inter',sans-serif}
+.tb.on{background:rgba(96,165,250,.18);border-color:#60a5fa;color:#60a5fa}
+.ev-row{display:flex;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04);gap:7px}
+.ev-row:last-child{border-bottom:none}
+.ev-t{font-size:10px;color:rgba(255,255,255,.25);width:90px;flex-shrink:0}
+.ev-n{flex:1;font-size:11px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:rgba(255,255,255,.7)}
+.ev-d{font-size:10px;color:rgba(255,255,255,.27);width:28px;text-align:right;flex-shrink:0}
+.badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;white-space:nowrap;margin-left:3px}
+.empty{text-align:center;padding:2rem;color:rgba(255,255,255,.2);font-size:12px}
+.sw{text-align:center;padding:5rem 2rem}
+.sp{width:36px;height:36px;border:3px solid rgba(96,165,250,.15);border-top-color:#60a5fa;border-radius:50%;animation:spin .9s linear infinite;margin:0 auto 1rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+.st{font-size:14px;font-weight:600;color:rgba(255,255,255,.5);margin-bottom:6px}
+.ss{font-size:11px;color:rgba(255,255,255,.25)}
+.eb{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:12px;padding:1.5rem;text-align:center;margin:2rem 0}
+.et{font-size:14px;font-weight:600;color:#f87171;margin-bottom:8px}
+.em{font-size:11px;color:rgba(255,255,255,.35);line-height:1.7}
+.rb{margin-top:12px;padding:7px 16px;background:#60a5fa;color:#0d1526;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif}
+.gg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px}
+.gb{text-align:center;padding:11px;border-radius:8px;border:1px solid}
+.gn{font-size:22px;font-weight:700;margin-bottom:2px}
+.gl{font-size:10px;opacity:.55;margin-bottom:2px}
+.gs2{font-size:9px;font-weight:600}
+.tp{border-radius:8px;padding:10px 13px;font-size:11px;line-height:1.6}
+.lb2{display:flex;align-items:center;gap:8px;font-size:10px;color:rgba(255,255,255,.3);margin-bottom:12px}
+.ld2{width:6px;height:6px;border-radius:50%;background:#10B981;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+</style>
+</head>
+<body>
+<div class="page">
+<div class="hdr">
+  <div>
+    <div class="hdr-tag">Productivity Tracker · PMAX</div>
+    <div class="hdr-title">Dashboard Năng suất</div>
+  </div>
+  <div class="hdr-meta" id="hm">Đang tải...</div>
+</div>
+<div class="picker">
+  <div class="picker-top">
+    <span style="font-size:11px;color:rgba(255,255,255,.4);font-weight:600">Xem theo:</span>
+    <div class="mode-btns">
+      <button class="mbtn on" data-mode="week">Tuần</button>
+      <button class="mbtn" data-mode="month">Tháng</button>
+    </div>
+  </div>
+  <div class="pills" id="pills"></div>
+</div>
+<div id="dash">
+  <div class="sw"><div class="sp"></div>
+    <div class="st">Đang kết nối Google Calendar...</div>
+    <div class="ss">Lần đầu có thể mất 5–15 giây</div>
+  </div>
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+// ── DATA NHÚNG THẲNG — không cần server, không cần Apps Script ───────────
+// Cập nhật: Claude fetch Calendar rồi replace mảng này, drag & drop lên Netlify
+var STATIC_DATA = {"email":"haiquan.nguyen@pmax.com.vn","updated":"15/03/2026 (T2–T6 từ 02–27/03)","events":[
+{"title":"Chấm công","start":"2026-03-02T09:00:00+07:00","end":"2026-03-02T10:00:00+07:00","att":0},
+{"title":"VGU Plan","start":"2026-03-02T10:00:00+07:00","end":"2026-03-02T12:00:00+07:00","att":0},
+{"title":"gửi plan VGU point2","start":"2026-03-02T12:00:00+07:00","end":"2026-03-02T12:30:00+07:00","att":0},
+{"title":"Release Pmax Reporting","start":"2026-03-02T13:30:00+07:00","end":"2026-03-02T14:00:00+07:00","att":0},
+{"title":"Booking request Cốc Cốc","start":"2026-03-02T14:15:00+07:00","end":"2026-03-02T14:30:00+07:00","att":0},
+{"title":"Số Flexibuy","start":"2026-03-02T14:30:00+07:00","end":"2026-03-02T15:30:00+07:00","att":0},
+{"title":"Report AGS","start":"2026-03-02T16:30:00+07:00","end":"2026-03-02T17:00:00+07:00","att":0},
+{"title":"Report Product & Assign","start":"2026-03-03T08:00:00+07:00","end":"2026-03-03T09:00:00+07:00","att":0},
+{"title":"Update Raw Data AGS","start":"2026-03-03T09:00:00+07:00","end":"2026-03-03T09:30:00+07:00","att":2},
+{"title":"Rep chị Hiền","start":"2026-03-03T09:00:00+07:00","end":"2026-03-03T09:15:00+07:00","att":0},
+{"title":"Reconcile","start":"2026-03-03T09:30:00+07:00","end":"2026-03-03T10:30:00+07:00","att":0},
+{"title":"Fe tết","start":"2026-03-03T10:00:00+07:00","end":"2026-03-03T11:00:00+07:00","att":0},
+{"title":"MEDIA COE MEETING","start":"2026-03-03T11:00:00+07:00","end":"2026-03-03T12:00:00+07:00","att":10},
+{"title":"Làm tracking GTM GA4 Ads","start":"2026-03-03T13:00:00+07:00","end":"2026-03-03T14:00:00+07:00","att":0},
+{"title":"Gửi plan VGU revised","start":"2026-03-03T13:30:00+07:00","end":"2026-03-03T14:00:00+07:00","att":0},
+{"title":"PMAX x VGU | Master brief","start":"2026-03-03T14:00:00+07:00","end":"2026-03-03T15:00:00+07:00","att":7},
+{"title":"Setup Amazon ads","start":"2026-03-03T15:30:00+07:00","end":"2026-03-03T16:30:00+07:00","att":0},
+{"title":"Dev GG Ads Advisor","start":"2026-03-03T16:00:00+07:00","end":"2026-03-03T17:30:00+07:00","att":0},
+{"title":"làm task a Huy roadmap product","start":"2026-03-04T11:00:00+07:00","end":"2026-03-04T12:00:00+07:00","att":0},
+{"title":"kw revise vgu","start":"2026-03-04T13:30:00+07:00","end":"2026-03-04T14:30:00+07:00","att":0},
+{"title":"tải extension tracking","start":"2026-03-04T14:30:00+07:00","end":"2026-03-04T15:30:00+07:00","att":0},
+{"title":"[IN] VGU | Calculate risk","start":"2026-03-04T16:30:00+07:00","end":"2026-03-04T17:00:00+07:00","att":6},
+{"title":"Remind: Gửi weekly report","start":"2026-03-04T17:30:00+07:00","end":"2026-03-04T18:00:00+07:00","att":4},
+{"title":"VGU Highlight","start":"2026-03-04T18:00:00+07:00","end":"2026-03-04T19:00:00+07:00","att":0},
+{"title":"Task","start":"2026-03-04T20:30:00+07:00","end":"2026-03-04T21:30:00+07:00","att":0},
+{"title":"Map Data AGS & Opt","start":"2026-03-05T10:00:00+07:00","end":"2026-03-05T10:30:00+07:00","att":0},
+{"title":"điền benchmark cho a Khanh","start":"2026-03-05T16:30:00+07:00","end":"2026-03-05T17:30:00+07:00","att":0},
+{"title":"Weekly meeting - Team Quỳnh","start":"2026-03-05T17:00:00+07:00","end":"2026-03-05T18:00:00+07:00","att":5},
+{"title":"update pfm ags","start":"2026-03-06T08:00:00+07:00","end":"2026-03-06T09:00:00+07:00","att":0},
+{"title":"ADtext, ads account vgu","start":"2026-03-06T09:00:00+07:00","end":"2026-03-06T10:00:00+07:00","att":0},
+{"title":"Nghiệm thu AGS","start":"2026-03-06T10:00:00+07:00","end":"2026-03-06T11:00:00+07:00","att":0},
+{"title":"AI Agent Discussion - 2","start":"2026-03-06T11:00:00+07:00","end":"2026-03-06T12:00:00+07:00","att":30},
+{"title":"asset studio","start":"2026-03-06T12:00:00+07:00","end":"2026-03-06T13:00:00+07:00","att":0},
+{"title":"release & assign","start":"2026-03-06T13:00:00+07:00","end":"2026-03-06T14:00:00+07:00","att":0},
+{"title":"scanmax","start":"2026-03-06T14:00:00+07:00","end":"2026-03-06T15:00:00+07:00","att":0},
+{"title":"IWD Event PMAX","start":"2026-03-06T16:00:00+07:00","end":"2026-03-06T17:00:00+07:00","att":1},
+{"title":"Product","start":"2026-03-09T07:30:00+07:00","end":"2026-03-09T08:15:00+07:00","att":0},
+{"title":"Media Request & Adtext VGU","start":"2026-03-09T08:30:00+07:00","end":"2026-03-09T09:30:00+07:00","att":0},
+{"title":"VGU Prepare","start":"2026-03-09T09:30:00+07:00","end":"2026-03-09T10:15:00+07:00","att":0},
+{"title":"Product Assign & Prepate","start":"2026-03-09T10:15:00+07:00","end":"2026-03-09T11:15:00+07:00","att":0},
+{"title":"SEM best practice collect","start":"2026-03-09T11:00:00+07:00","end":"2026-03-09T12:00:00+07:00","att":0},
+{"title":"Weekly meeting team Quỳnh","start":"2026-03-09T14:00:00+07:00","end":"2026-03-09T15:00:00+07:00","att":5},
+{"title":"Champion Update","start":"2026-03-09T16:00:00+07:00","end":"2026-03-09T17:00:00+07:00","att":3},
+{"title":"Report Product","start":"2026-03-10T06:00:00+07:00","end":"2026-03-10T08:00:00+07:00","att":0},
+{"title":"Setup FE Tết","start":"2026-03-10T09:00:00+07:00","end":"2026-03-10T10:00:00+07:00","att":0},
+{"title":"Dev Asset Studio","start":"2026-03-10T10:00:00+07:00","end":"2026-03-10T11:00:00+07:00","att":0},
+{"title":"MEDIA COE MEETING","start":"2026-03-10T11:00:00+07:00","end":"2026-03-10T12:00:00+07:00","att":10},
+{"title":"[IN] VGU | Align SLA","start":"2026-03-10T14:00:00+07:00","end":"2026-03-10T14:30:00+07:00","att":5},
+{"title":"Catchup Masthead","start":"2026-03-10T17:00:00+07:00","end":"2026-03-10T17:30:00+07:00","att":2},
+{"title":"Catchup Innovation","start":"2026-03-10T17:30:00+07:00","end":"2026-03-10T18:30:00+07:00","att":2},
+{"title":"Opt & Update PFM AGS","start":"2026-03-11T08:00:00+07:00","end":"2026-03-11T08:30:00+07:00","att":0},
+{"title":"Shift tiền FE Tết Google","start":"2026-03-11T08:30:00+07:00","end":"2026-03-11T08:45:00+07:00","att":0},
+{"title":"setup camp gg fe tết","start":"2026-03-11T10:00:00+07:00","end":"2026-03-11T10:15:00+07:00","att":0},
+{"title":"LEGAL TRAINING | Luật QC","start":"2026-03-11T14:00:00+07:00","end":"2026-03-11T15:00:00+07:00","att":1},
+{"title":"[PMAX x AGS] Weekly Meeting","start":"2026-03-11T16:00:00+07:00","end":"2026-03-11T16:30:00+07:00","att":8},
+{"title":"Remind: Done adtext VGU","start":"2026-03-11T17:00:00+07:00","end":"2026-03-11T17:30:00+07:00","att":2},
+{"title":"Media team meeting Jan","start":"2026-03-11T17:00:00+07:00","end":"2026-03-11T19:00:00+07:00","att":10},
+{"title":"Remind: Gửi weekly report","start":"2026-03-11T17:30:00+07:00","end":"2026-03-11T18:00:00+07:00","att":4},
+{"title":"viết adtext vgu","start":"2026-03-12T08:00:00+07:00","end":"2026-03-12T09:00:00+07:00","att":0},
+{"title":"Dev GA4","start":"2026-03-12T09:00:00+07:00","end":"2026-03-12T10:00:00+07:00","att":0},
+{"title":"report team","start":"2026-03-12T10:00:00+07:00","end":"2026-03-12T11:00:00+07:00","att":0},
+{"title":"Weekly meeting - Team Quỳnh","start":"2026-03-12T14:00:00+07:00","end":"2026-03-12T15:00:00+07:00","att":5},
+{"title":"ĂN XẾ CẢ NHÀ ƠI","start":"2026-03-12T15:00:00+07:00","end":"2026-03-12T16:00:00+07:00","att":1},
+{"title":"Set up các rule Paxy","start":"2026-03-12T17:00:00+07:00","end":"2026-03-12T18:00:00+07:00","att":5},
+{"title":"Tắt GDN bật lại account cũ","start":"2026-03-12T18:30:00+07:00","end":"2026-03-12T19:30:00+07:00","att":0},
+{"title":"setup tracking vgu","start":"2026-03-13T09:30:00+07:00","end":"2026-03-13T10:30:00+07:00","att":0},
+{"title":"opt ags","start":"2026-03-13T11:00:00+07:00","end":"2026-03-13T12:00:00+07:00","att":0},
+{"title":"Audience VGU","start":"2026-03-13T13:30:00+07:00","end":"2026-03-13T14:30:00+07:00","att":0},
+{"title":"TECH TRAINING | Claude Cowork","start":"2026-03-13T15:00:00+07:00","end":"2026-03-13T16:00:00+07:00","att":1},
+{"title":"Catchup Quỳnh x Quân","start":"2026-03-13T17:00:00+07:00","end":"2026-03-13T18:00:00+07:00","att":3},
+{"title":"Ăn tối thân tình","start":"2026-03-13T18:00:00+07:00","end":"2026-03-13T22:00:00+07:00","att":4},
+{"title":"Check Pixel TikTok VGU","start":"2026-03-16T09:30:00+07:00","end":"2026-03-16T10:30:00+07:00","att":0},
+{"title":"MEDIA COE MEETING","start":"2026-03-17T11:00:00+07:00","end":"2026-03-17T12:00:00+07:00","att":10},
+{"title":"Remind: Gửi weekly report","start":"2026-03-18T17:30:00+07:00","end":"2026-03-18T18:00:00+07:00","att":4},
+{"title":"Weekly meeting - Team Quỳnh","start":"2026-03-19T14:00:00+07:00","end":"2026-03-19T15:00:00+07:00","att":5},
+{"title":"ĂN XẾ CẢ NHÀ ƠI","start":"2026-03-19T15:00:00+07:00","end":"2026-03-19T16:00:00+07:00","att":1},
+{"title":"Checkpoint Channel Champion","start":"2026-03-20T16:00:00+07:00","end":"2026-03-20T17:00:00+07:00","att":4},
+{"title":"MEDIA COE MEETING","start":"2026-03-24T11:00:00+07:00","end":"2026-03-24T12:00:00+07:00","att":10},
+{"title":"[PMAX x AGS] Weekly Meeting","start":"2026-03-25T16:00:00+07:00","end":"2026-03-25T16:30:00+07:00","att":8},
+{"title":"Remind: Gửi weekly report","start":"2026-03-25T17:30:00+07:00","end":"2026-03-25T18:00:00+07:00","att":4},
+{"title":"SKAI Training","start":"2026-03-26T13:00:00+07:00","end":"2026-03-26T14:00:00+07:00","att":4},
+{"title":"Weekly meeting - Team Quỳnh","start":"2026-03-26T14:00:00+07:00","end":"2026-03-26T15:00:00+07:00","att":5},
+{"title":"ĂN XẾ CẢ NHÀ ƠI","start":"2026-03-26T15:00:00+07:00","end":"2026-03-26T16:00:00+07:00","att":1},
+{"title":"Checkpoint Channel Champion","start":"2026-03-27T16:00:00+07:00","end":"2026-03-27T17:00:00+07:00","att":4},
+{"title":"Team Weekly Meeting","start":"2026-03-27T16:30:00+07:00","end":"2026-03-27T18:00:00+07:00","att":14}
+]};
+// ─────────────────────────────────────────────────────────────────────────
+
+var GC='rgba(255,255,255,.06)', TC='rgba(255,255,255,.27)';
+var C = {
+  DEEP:    {l:'Deep Work',     c:'#10B981', bg:'rgba(16,185,129,.18)',  t:'#34d399'},
+  COLLAB:  {l:'Collaboration', c:'#60a5fa', bg:'rgba(96,165,250,.18)',  t:'#93c5fd'},
+  SHALLOW: {l:'Shallow Work',  c:'#f59e0b', bg:'rgba(245,158,11,.18)', t:'#fcd34d'},
+  TRAINING:{l:'Training',      c:'#ec4899', bg:'rgba(236,72,153,.18)', t:'#f9a8d4'},
+  BREAK:   {l:'Nghỉ & Cá nhân',c:'#a78bfa', bg:'rgba(167,139,250,.18)',t:'#c4b5fd'},
+  REMIND:  {l:'Nhắc nhở',      c:'#6b7280', bg:'rgba(107,114,128,.18)',t:'#9ca3af'}
+};
+var IS = {
+  success:{b:'#10B981',bg:'rgba(16,185,129,.09)',ic:'rgba(16,185,129,.22)',it:'#34d399',icon:'✓'},
+  danger: {b:'#ef4444',bg:'rgba(239,68,68,.09)', ic:'rgba(239,68,68,.22)', it:'#f87171',icon:'!'},
+  warning:{b:'#f59e0b',bg:'rgba(245,158,11,.09)',ic:'rgba(245,158,11,.22)',it:'#fbbf24',icon:'!'},
+  info:   {b:'#60a5fa',bg:'rgba(96,165,250,.09)',ic:'rgba(96,165,250,.22)',it:'#93c5fd',icon:'→'},
+  tip:    {b:'#a78bfa',bg:'rgba(167,139,250,.09)',ic:'rgba(167,139,250,.22)',it:'#c4b5fd',icon:'→'}
+};
+
+var EV=[], WK=[], MO=[], mode='week', active='', lft=null, ch={};
+
+function p2(n){return String(n).padStart(2,'0');}
+function fd(d){return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());}
+function gmon(d){var dt=new Date(d),day=dt.getDay(),diff=day===0?-6:1-day;dt.setDate(dt.getDate()+diff);dt.setHours(0,0,0,0);return dt;}
+
+function classify(t,a,d){
+  if(/^remind:/i.test(t)) return 'REMIND';
+  if(/training|best practice|workshop|ai agent|legal|luật|skai/i.test(t)) return 'TRAINING';
+  if(/ăn|xế|tối|cơm|lunch|break|iwd|women/i.test(t)) return 'BREAK';
+  if(a>=3||/meeting|weekly|catchup|coe|align|checkpoint|champion|discussion/i.test(t)) return 'COLLAB';
+  if(d>=60&&a<=1) return 'DEEP';
+  if(d>=30&&/dev|setup|plan|report|vgu|ags|tracking|pixel|audience|opt|scanmax|reconcile|roadmap|release|assign/i.test(t)) return 'DEEP';
+  return d<20 ? 'SHALLOW' : 'SHALLOW';
+}
+
+function buildWk(mon,idx){
+  var dt=[],lb=[],dn=['T2','T3','T4','T5','T6'];
+  for(var i=0;i<5;i++){var d=new Date(mon);d.setDate(d.getDate()+i);dt.push(fd(d));lb.push(dn[i]+' '+p2(d.getDate()));}
+  var fri=new Date(mon);fri.setDate(fri.getDate()+4);
+  var m=mon.getMonth()+1;
+  return{key:'w'+idx,
+    label:p2(mon.getDate())+'–'+p2(fri.getDate())+'/'+p2(m),
+    full:p2(mon.getDate())+' – '+p2(fri.getDate())+' / '+p2(m)+' / '+mon.getFullYear(),
+    start:dt[0],end:dt[4],days:lb,dates:dt};
+}
+
+function load(){
+  try{
+    var data=STATIC_DATA;
+    EV=data.events.map(function(ev){
+      var sd=new Date(ev.start),ed=new Date(ev.end),dur=(ed-sd)/60000;
+      if(sd.getDay()===0||sd.getDay()===6||dur<=0) return null;
+      return{title:ev.title,s:fd(sd)+'T'+p2(sd.getHours())+':'+p2(sd.getMinutes()),sd:sd,ed:ed,dur:dur,att:ev.att||0,cat:classify(ev.title,ev.att||0,dur)};
+    }).filter(Boolean);
+    lft=new Date();
+    var allD=EV.map(function(e){return e.sd;}),mn=new Date(Math.min.apply(null,allD)),mx=new Date(Math.max.apply(null,allD));
+    WK=[];var cur=gmon(mn),idx=1;
+    while(cur<=mx){
+      var wk=buildWk(cur,idx);
+      if(EV.some(function(e){return e.s>=wk.start&&e.s<=wk.end+'T23:59';})) WK.push(wk);
+      cur.setDate(cur.getDate()+7);idx++;
+    }
+    var mm={};
+    EV.forEach(function(e){var k=e.sd.getFullYear()+'-'+p2(e.sd.getMonth()+1);if(!mm[k])mm[k]={y:e.sd.getFullYear(),m:e.sd.getMonth()+1};});
+    MO=Object.keys(mm).sort().map(function(k,i){
+      var v=mm[k],s=new Date(v.y,v.m-1,1),e=new Date(v.y,v.m,0);
+      var wks=WK.filter(function(w){return w.start>=fd(s)&&w.start<=fd(e);});
+      return{key:'m'+(i+1),label:'Tháng '+v.m+'/'+v.y,full:'Tháng '+v.m+' / '+v.y,start:fd(s),end:fd(e),weeks:wks};
+    });
+    document.getElementById('hm').innerHTML=data.email+'<br><span style="color:#10B981">● Static</span> · '+data.updated;
+    active=WK.length?WK[WK.length-1].key:'';
+    buildPills();refresh();
+  }catch(e){showErr(e.message);}
+}
+
+function showErr(msg){
+  document.getElementById('dash').innerHTML='<div class="eb"><div class="et">⚠️ Lỗi tải dữ liệu</div><div class="em">'+msg+'</div><button class="rb" onclick="load()">Thử lại</button></div>';
+}
+
+var fh=function(m){return m>=60?(+(m/60).toFixed(1))+'h':Math.round(m)+'p';};
+var sc=function(s){return s>=65?'#10B981':s>=45?'#f59e0b':'#ef4444';};
+function evIn(s,e){var a=new Date(s+'T00:00:00'),b=new Date(e+'T23:59:59');return EV.filter(function(r){return r.sd>=a&&r.sd<=b;});}
+function calcM(arr){var m={};Object.keys(C).forEach(function(k){m[k]=0;});arr.forEach(function(e){m[e.cat]+=e.dur;});return m;}
+function score(tot,ev){
+  var wk=['DEEP','COLLAB','SHALLOW','TRAINING'],wm=wk.reduce(function(s,k){return s+(tot[k]||0);},0);
+  if(!wm)return 0;
+  var dr=tot.DEEP/wm*100,ml=tot.COLLAB/wm*100;
+  var de=ev.filter(function(e){return e.cat==='DEEP';});
+  var af=de.length?de.reduce(function(s,e){return s+e.dur;},0)/de.length:0;
+  var days=new Set(ev.map(function(e){return e.s.slice(0,10);})).size||1;
+  var sw=ev.filter(function(e){return e.cat!=='BREAK'&&e.cat!=='REMIND';}).length/days;
+  return Math.min(100,Math.round(dr*.45+(100-ml)*.30+(Math.min(af,90)/90)*100*.15+Math.max(0,100-sw*8)*.10));
+}
+function gaps(ev){
+  var s=[].concat(ev).sort(function(a,b){return a.sd-b.sd;}),g=[];
+  for(var i=0;i<s.length-1;i++){var d=(s[i+1].sd-s[i].ed)/60000;if(d>=15)g.push({dur:d,start:s[i].ed,end:s[i+1].sd});}
+  return g;
+}
+function mkIns(ev,tot,wm,per){
+  var dr=wm>0?Math.round(tot.DEEP/wm*100):0,ml=wm>0?Math.round(tot.COLLAB/wm*100):0;
+  var me=ev.filter(function(e){return e.cat==='COLLAB';}),am=me.length?Math.round(me.reduce(function(s,e){return s+e.dur;},0)/me.length):0;
+  var de=ev.filter(function(e){return e.cat==='DEEP';});
+  var af=de.length?Math.round(de.reduce(function(s,e){return s+e.dur;},0)/de.length):0;
+  var lf=de.length?Math.max.apply(null,de.map(function(e){return e.dur;})):0;
+  var s2=score(tot,ev),gs=gaps(ev),bg=gs.filter(function(g){return g.dur>=60;});
+  var days=new Set(ev.map(function(e){return e.s.slice(0,10);})).size||1;
+  var sw=Math.round(ev.filter(function(e){return e.cat!=='BREAK'&&e.cat!=='REMIND';}).length/days*10)/10;
+  var vg=ev.filter(function(e){return/vgu/i.test(e.title);});
+  var r=[];
+  if(dr>=45) r.push({type:'success',title:'Deep Work '+dr+'% — Trên target!',text:fh(tot.DEEP)+' deep work. Longest: '+fh(lf)+', avg: '+fh(af)+'. Tiếp tục bảo vệ sáng sớm.'});
+  else r.push({type:'danger',title:'Deep Work chỉ '+dr+'% — Target 50%+',text:bg.length>=2?'Có '+bg.length+' gaps ≥1h chưa dùng → block ngay, ước ~'+Math.min(65,dr+bg.length*8)+'%.':'Cần decline meetings để tạo focus time.'});
+  if(ml>35) r.push({type:'warning',title:'Meeting Load '+ml+'% — Vượt 35% ('+me.length+' cuộc · avg '+am+'p)',text:'Thử 25/50 rule hoặc batch meetings vào chiều T3,T5.'});
+  else r.push({type:'success',title:'Meeting Load '+ml+'% — OK!',text:me.length+' cuộc · avg '+am+'p. Tuần cân bằng.'});
+  if(sw>8) r.push({type:'warning',title:sw+' switches/day — Cao (target <8)',text:'Gộp tasks nhỏ vào 1 batch block 90p → giảm switching ~6/day.'});
+  else r.push({type:'success',title:sw+' switches/day — Tốt!',text:'Avg focus block '+fh(af)+'. '+(af>=75?'Gần optimal 90p!':'Hướng đến 90p.')});
+  if(vg.length>=4) r.push({type:'info',title:'VGU: '+vg.length+' tasks — Nên batch',text:'Tạo "VGU Block" 8h–9h30 mỗi T2,T4 để xử lý tập trung.'});
+  if(s2<60) r.push({type:'tip',title:'Score '+s2+'/100 — Lên 70+ bằng 3 bước',text:'(1) Block 2h sáng. (2) Async 2 meetings. (3) Batch tasks. Dự kiến: ~'+Math.min(100,s2+15)+'/100.'});
+  else if(s2<75) r.push({type:'tip',title:'Score '+s2+'/100 — Lên 80+ bằng 2 tactics',text:'(1) No-meeting morning T2,T4. (2) Tăng focus block lên 90p.'});
+  else r.push({type:'tip',title:'Score '+s2+'/100 — Xuất sắc!',text:'Share best practices với team về deep work blocking.'});
+  return r;
+}
+function tl(ev,dates,days){
+  var WS=6*60,WE=22*60,SP=WE-WS;
+  return dates.map(function(d,i){
+    var de=ev.filter(function(e){return e.s.startsWith(d);}).sort(function(a,b){return a.sd-b.sd;});
+    var bl=de.map(function(e){var sm=e.sd.getHours()*60+e.sd.getMinutes(),l=Math.max(0,(sm-WS)/SP*100),w=Math.max(0.3,e.dur/SP*100);return'<div class="tl-blk" style="left:'+l.toFixed(1)+'%;width:'+w.toFixed(1)+'%;background:'+C[e.cat].c+'" title="'+e.title+'"></div>';}).join('');
+    return'<div class="tl-row"><span class="tl-lbl">'+days[i]+'</span><div class="tl-track">'+bl+'</div></div>';
+  }).join('');
+}
+function gapHTML(ev){
+  var gs=gaps(ev),bg=gs.filter(function(g){return g.dur>=60;}),mg=gs.filter(function(g){return g.dur>=30&&g.dur<60;}),sg=gs.filter(function(g){return g.dur>=15&&g.dur<30;});
+  var dn=['CN','T2','T3','T4','T5','T6','T7'];
+  var tip=bg.length>=2?'Có '+bg.length+' slots ≥1h. Block ngay!':bg.length===1?'1 gap lớn — protect it!':mg.length>=3?'Merge '+Math.min(3,mg.length)+' gaps 30–60p.':'Cần decline 2–3 meetings.';
+  return'<div class="gg">'+
+    '<div class="gb" style="background:rgba(16,185,129,.07);border-color:rgba(16,185,129,.25)"><div class="gn" style="color:#10B981">'+bg.length+'</div><div class="gl">Gaps ≥1h</div><div class="gs2" style="color:#10B981">'+fh(bg.reduce(function(s,g){return s+g.dur;},0))+' · Deep Work</div></div>'+
+    '<div class="gb" style="background:rgba(245,158,11,.07);border-color:rgba(245,158,11,.25)"><div class="gn" style="color:#f59e0b">'+mg.length+'</div><div class="gl">Gaps 30–60p</div><div class="gs2" style="color:#f59e0b">'+fh(mg.reduce(function(s,g){return s+g.dur;},0))+'</div></div>'+
+    '<div class="gb" style="background:rgba(107,114,128,.07);border-color:rgba(107,114,128,.25)"><div class="gn" style="color:#9ca3af">'+sg.length+'</div><div class="gl">Gaps 15–30p</div><div class="gs2" style="color:#9ca3af">'+fh(sg.reduce(function(s,g){return s+g.dur;},0))+'</div></div>'+
+    '</div>'+
+    (bg.length?'<div style="margin-bottom:10px"><div style="font-size:10px;font-weight:700;color:#10B981;margin-bottom:6px">Cơ hội Deep Work tốt nhất</div>'+bg.slice(0,4).map(function(g){return'<div style="font-size:11px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);display:flex;justify-content:space-between"><span style="color:rgba(255,255,255,.45)">'+dn[g.start.getDay()]+' '+g.start.getHours()+':'+p2(g.start.getMinutes())+'–'+g.end.getHours()+':'+p2(g.end.getMinutes())+'</span><span style="color:#10B981;font-weight:600">'+fh(g.dur)+'</span></div>';}).join('')+(bg.length>4?'<div style="font-size:10px;color:rgba(255,255,255,.25);margin-top:4px">+'+( bg.length-4)+' gaps khác</div>':'')+'</div>':'')+
+    '<div class="tp" style="background:rgba(96,165,250,.08);border:1px solid rgba(96,165,250,.2)"><span style="color:#60a5fa;font-weight:600">Khuyến nghị:</span> <span style="color:rgba(255,255,255,.55)">'+tip+'</span></div>';
+}
+function insHTML(arr){return arr.map(function(i){var c=IS[i.type]||IS.info;return'<div class="ins" style="background:'+c.bg+';border-left:3px solid '+c.b+'"><div class="ins-icon" style="background:'+c.ic+';color:'+c.it+'">'+c.icon+'</div><div><div class="ins-ttl" style="color:'+c.it+'">'+i.title+'</div><div class="ins-txt">'+i.text+'</div></div></div>';}).join('');}
+function lbar(){return'<div class="lb2"><div class="ld2"></div>Live · Cập nhật '+(lft?lft.getHours()+':'+p2(lft.getMinutes()):'')+' · <a href="#" onclick="load();return false;" style="color:#60a5fa;text-decoration:none">↺ Refresh</a></div>';}
+function setupEv(ev,meta){
+  var af='ALL';
+  var tabs=[{k:'ALL',l:'Tất cả'}].concat(Object.keys(C).map(function(k){return{k:k,l:C[k].l};}));
+  document.getElementById('ft').innerHTML=tabs.map(function(t){return'<button class="tb'+(t.k==='ALL'?' on':'')+'" data-k="'+t.k+'">'+t.l+'</button>';}).join('');
+  function rnd(){
+    var f=ev.filter(function(e){return af==='ALL'||e.cat===af;}).sort(function(a,b){return a.sd-b.sd;});
+    var dl=function(e){var i=meta.dates?meta.dates.findIndex(function(d){return e.s.startsWith(d);}):-1;return i>=0?(meta.days[i]+' '):e.s.slice(5,10)+' ';};
+    document.getElementById('evl').innerHTML=f.length?f.map(function(e){return'<div class="ev-row"><span class="ev-t">'+dl(e)+e.sd.getHours()+':'+p2(e.sd.getMinutes())+'</span><span class="ev-n" title="'+e.title+'">'+e.title+'</span><span class="ev-d">'+fh(e.dur)+'</span><span class="badge" style="background:'+C[e.cat].bg+';color:'+C[e.cat].t+'">'+C[e.cat].l+'</span></div>';}).join(''):'<div class="empty">Không có sự kiện</div>';
+  }
+  document.getElementById('ft').onclick=function(ev2){var b=ev2.target.closest('.tb');if(!b)return;af=b.dataset.k;document.querySelectorAll('#ft .tb').forEach(function(x){x.classList.toggle('on',x.dataset.k===af);});rnd();};
+  rnd();
+}
+
+function renderWeek(wk){
+  var ev=evIn(wk.start,wk.end),tot=calcM(ev);
+  var wkeys=['DEEP','COLLAB','SHALLOW','TRAINING'],wm=wkeys.reduce(function(s,k){return s+(tot[k]||0);},0);
+  var dr=wm>0?Math.round(tot.DEEP/wm*100):0,ml=wm>0?Math.round(tot.COLLAB/wm*100):0;
+  var me=ev.filter(function(e){return e.cat==='COLLAB';}),am=me.length?Math.round(me.reduce(function(s,e){return s+e.dur;},0)/me.length):0;
+  var de=ev.filter(function(e){return e.cat==='DEEP';});
+  var af=de.length?Math.round(de.reduce(function(s,e){return s+e.dur;},0)/de.length):0;
+  var lf=de.length?Math.max.apply(null,de.map(function(e){return e.dur;})):0;
+  var s2=score(tot,ev),dm=wk.dates.map(function(d){return calcM(ev.filter(function(e){return e.s.startsWith(d);}));});
+  var dy=new Set(ev.map(function(e){return e.s.slice(0,10);})).size||1;
+  var sw=Math.round(ev.filter(function(e){return e.cat!=='BREAK'&&e.cat!=='REMIND';}).length/dy*10)/10;
+  var ck=Object.keys(C);
+  var leg=ck.filter(function(k){return k!=='REMIND';}).map(function(k){return'<span class="li"><span class="ld" style="background:'+C[k].c+'"></span>'+C[k].l+'</span>';}).join('');
+  var sr=[['Deep Work (40%)',Math.round(Math.min(100,dr*1.25)*.4),'#10B981'],['Meeting (25%)',Math.round(Math.max(0,100-ml*1.5)*.25),'#60a5fa'],['Focus (20%)',Math.round(Math.min(100,af/90*100)*.2),'#ec4899'],['Anti-frag (15%)',Math.round(Math.max(0,100-sw*8)*.15),'#a78bfa']].map(function(r){return'<div class="pb-row"><span class="pb-lbl">'+r[0]+'</span><span class="pb-val" style="color:'+r[2]+'">'+r[1]+'</span></div><div class="pb-bg"><div class="pb-fill" style="width:'+Math.min(100,r[1]*4)+'%;background:'+r[2]+'"></div></div>';}).join('');
+
+  document.getElementById('dash').innerHTML=lbar()+
+  '<div class="metrics">'+
+  '<div class="mc mc-deep"><div class="mc-bar" style="background:#10B981"></div><div class="mc-lbl">Deep Work</div><div class="mc-val" style="color:#10B981">'+dr+'%</div><div class="mc-sub">'+fh(tot.DEEP)+' · longest '+fh(lf)+'</div></div>'+
+  '<div class="mc mc-meet"><div class="mc-bar" style="background:#60a5fa"></div><div class="mc-lbl">Meeting Load</div><div class="mc-val" style="color:#60a5fa">'+ml+'%</div><div class="mc-sub">'+me.length+' cuộc · avg '+am+'p</div></div>'+
+  '<div class="mc mc-score"><div class="mc-bar" style="background:'+sc(s2)+'"></div><div class="mc-lbl">Score</div><div class="mc-val" style="color:'+sc(s2)+'">'+s2+'</div><div class="mc-sub">avg focus '+fh(af)+'</div></div>'+
+  '<div class="mc mc-other"><div class="mc-bar" style="background:'+(sw>8?'#ef4444':'#10B981')+'"></div><div class="mc-lbl">Fragmentation</div><div class="mc-val" style="color:'+(sw>8?'#f87171':'#10B981')+'">'+sw+'</div><div class="mc-sub">switches/day</div></div>'+
+  '</div>'+
+  '<div class="g2">'+
+  '<div class="card"><div class="card-title">Phân bổ thời gian</div><div class="legend">'+ck.map(function(k){return'<span class="li"><span class="ld" style="background:'+C[k].c+'"></span>'+C[k].l+'</span>';}).join('')+'</div><div style="position:relative;height:175px"><canvas id="pie"></canvas></div></div>'+
+  '<div class="card"><div class="card-title">Score breakdown</div><div class="score-num" style="color:'+sc(s2)+'">'+s2+'</div><div class="score-sub">'+(s2>=65?'Năng suất tốt':s2>=45?'Cần cải thiện':'Cần chú ý')+' · target 75+</div>'+sr+'</div>'+
+  '</div>'+
+  '<div class="card"><div class="card-title">Phân bổ theo ngày</div><div class="legend">'+leg+'</div><div style="position:relative;height:185px"><canvas id="bar"></canvas></div></div>'+
+  '<div class="card"><div class="card-title">Timeline · 6h–22h</div><div class="legend">'+leg+'</div>'+tl(ev,wk.dates,wk.days)+'<div class="tl-hrs"><span>6h</span><span>8h</span><span>10h</span><span>12h</span><span>14h</span><span>16h</span><span>18h</span><span>20h</span><span>22h</span></div></div>'+
+  '<div class="card"><div class="card-title">Free Time — Cơ hội Deep Work</div>'+gapHTML(ev)+'</div>'+
+  '<div class="card"><div class="card-title">Top 8 activities</div><div style="position:relative;height:248px"><canvas id="top"></canvas></div></div>'+
+  '<div class="sec-lbl">AI Insights & Khuyến nghị</div>'+
+  '<div class="card"><div class="card-title">Tự động phân tích từ lịch thực tế</div>'+insHTML(mkIns(ev,tot,wm,wk.full))+'</div>'+
+  '<div class="sec-lbl">Sự kiện</div>'+
+  '<div class="card"><div class="tabs" id="ft"></div><div id="evl"></div></div>';
+
+  ch.pie=new Chart(document.getElementById('pie'),{type:'doughnut',data:{labels:ck.map(function(k){return C[k].l;}),datasets:[{data:ck.map(function(k){return+(tot[k]/60).toFixed(1);}),backgroundColor:ck.map(function(k){return C[k].c;}),borderWidth:0,hoverOffset:5}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return ctx.label+': '+ctx.parsed+'h';}}}}}});
+  ch.bar=new Chart(document.getElementById('bar'),{type:'bar',data:{labels:wk.days,datasets:['DEEP','COLLAB','SHALLOW','TRAINING','BREAK'].map(function(k){return{label:C[k].l,data:dm.map(function(d){return+(d[k]/60).toFixed(1);}),backgroundColor:C[k].c,borderRadius:2,borderSkipped:false};})},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{stacked:true,ticks:{color:TC,font:{size:10}},grid:{color:GC}},y:{stacked:true,ticks:{callback:function(v){return v+'h';},color:TC,font:{size:10}},grid:{color:GC}}}}});
+  var t8=ev.filter(function(e){return e.cat!=='REMIND';}).sort(function(a,b){return b.dur-a.dur;}).slice(0,8);
+  if(t8.length) ch.top=new Chart(document.getElementById('top'),{type:'bar',data:{labels:t8.map(function(e){return e.title.length>36?e.title.slice(0,34)+'…':e.title;}),datasets:[{data:t8.map(function(e){return Math.round(e.dur);}),backgroundColor:t8.map(function(e){return C[e.cat].c;}),borderRadius:3}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return ctx.parsed.x+'p';}}}},scales:{x:{ticks:{callback:function(v){return v+'p';},color:TC,font:{size:10}},grid:{color:GC}},y:{ticks:{color:TC,font:{size:10}},grid:{display:false}}}}});
+  setupEv(ev,wk);
+}
+
+function renderMonth(mo){
+  var al=evIn(mo.start,mo.end),tot=calcM(al);
+  var wkeys=['DEEP','COLLAB','SHALLOW','TRAINING'],wm=wkeys.reduce(function(s,k){return s+(tot[k]||0);},0);
+  var dr=wm>0?Math.round(tot.DEEP/wm*100):0,ml=wm>0?Math.round(tot.COLLAB/wm*100):0;
+  var me=al.filter(function(e){return e.cat==='COLLAB';}),am=me.length?Math.round(me.reduce(function(s,e){return s+e.dur;},0)/me.length):0;
+  var s2=score(tot,al),ck=Object.keys(C);
+  var ws=mo.weeks.map(function(wk){var e=evIn(wk.start,wk.end),t=calcM(e),w=wkeys.reduce(function(s,k){return s+(t[k]||0);},0);return{label:wk.label,e:e,t:t,wm:w,s:score(t,e),dr:w>0?Math.round(t.DEEP/w*100):0,ml:w>0?Math.round(t.COLLAB/w*100):0};});
+
+  document.getElementById('dash').innerHTML=lbar()+
+  '<div class="metrics">'+
+  '<div class="mc mc-deep"><div class="mc-bar" style="background:#10B981"></div><div class="mc-lbl">Deep Work avg</div><div class="mc-val" style="color:#10B981">'+dr+'%</div><div class="mc-sub">'+fh(tot.DEEP)+' tổng</div></div>'+
+  '<div class="mc mc-meet"><div class="mc-bar" style="background:#60a5fa"></div><div class="mc-lbl">Meeting Load</div><div class="mc-val" style="color:#60a5fa">'+ml+'%</div><div class="mc-sub">'+me.length+' cuộc · avg '+am+'p</div></div>'+
+  '<div class="mc mc-score"><div class="mc-bar" style="background:'+sc(s2)+'"></div><div class="mc-lbl">Avg Score</div><div class="mc-val" style="color:'+sc(s2)+'">'+s2+'</div><div class="mc-sub">/ 100</div></div>'+
+  '<div class="mc mc-other"><div class="mc-bar" style="background:#a78bfa"></div><div class="mc-lbl">Tổng events</div><div class="mc-val" style="color:#a78bfa">'+al.filter(function(e){return e.cat!=='REMIND';}).length+'</div><div class="mc-sub">'+fh(wm)+' work hours</div></div>'+
+  '</div>'+
+  '<div class="sec-lbl">So sánh các tuần</div>'+
+  '<div class="wc-grid">'+ws.map(function(w,i){var prev=i>0?ws[i-1]:null,diff=prev?w.s-prev.s:null,ti=diff===null?'':'<span class="'+(diff>0?'trend-up':diff<0?'trend-dn':'trend-eq')+'">'+(diff>0?'↑+'+diff:diff<0?'↓'+diff:'→0')+'</span>';return'<div class="wc"><div class="wc-lbl">'+w.label+'</div><div class="wc-score" style="color:'+sc(w.s)+'">'+w.s+'<span style="font-size:12px;opacity:.4"> /100</span> '+ti+'</div><div class="wc-bar"><div class="wc-fill" style="width:'+w.s+'%;background:'+sc(w.s)+'"></div></div><div class="wc-stat">Deep '+w.dr+'% · Meet '+w.ml+'%<br>'+w.e.filter(function(e){return e.cat!=='REMIND';}).length+' events · '+fh(w.wm)+'</div></div>';}).join('')+'</div>'+
+  '<div class="g2">'+
+  '<div class="card"><div class="card-title">Phân bổ cả tháng</div><div class="legend">'+ck.map(function(k){return'<span class="li"><span class="ld" style="background:'+C[k].c+'"></span>'+C[k].l+'</span>';}).join('')+'</div><div style="position:relative;height:175px"><canvas id="pie"></canvas></div></div>'+
+  '<div class="card"><div class="card-title">Score xu hướng</div><div style="position:relative;height:175px"><canvas id="trend"></canvas></div></div>'+
+  '</div>'+
+  '<div class="card"><div class="card-title">Deep Work vs Meeting theo tuần</div><div style="position:relative;height:180px"><canvas id="bar"></canvas></div></div>'+
+  '<div class="sec-lbl">AI Insights tháng</div>'+
+  '<div class="card"><div class="card-title">Phân tích xu hướng</div>'+insHTML(mkIns(al,tot,wm,mo.full))+'</div>'+
+  '<div class="sec-lbl">Tất cả sự kiện</div>'+
+  '<div class="card"><div class="tabs" id="ft"></div><div id="evl"></div></div>';
+
+  ch.pie=new Chart(document.getElementById('pie'),{type:'doughnut',data:{labels:ck.map(function(k){return C[k].l;}),datasets:[{data:ck.map(function(k){return+(tot[k]/60).toFixed(1);}),backgroundColor:ck.map(function(k){return C[k].c;}),borderWidth:0,hoverOffset:5}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return ctx.label+': '+ctx.parsed+'h';}}}}}});
+  ch.trend=new Chart(document.getElementById('trend'),{type:'line',data:{labels:ws.map(function(w){return w.label;}),datasets:[{data:ws.map(function(w){return w.s;}),borderColor:'#60a5fa',backgroundColor:'rgba(96,165,250,.1)',tension:.4,fill:true,pointBackgroundColor:ws.map(function(w){return sc(w.s);}),pointRadius:5,pointBorderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return'Score: '+ctx.parsed.y;}}}},scales:{x:{ticks:{color:TC,font:{size:10}},grid:{color:GC}},y:{min:0,max:100,ticks:{color:TC,font:{size:10}},grid:{color:GC}}}}});
+  ch.bar=new Chart(document.getElementById('bar'),{type:'bar',data:{labels:ws.map(function(w){return w.label;}),datasets:[{label:'Deep Work',data:ws.map(function(w){return w.dr;}),backgroundColor:'#10B981',borderRadius:2,borderSkipped:false},{label:'Meeting',data:ws.map(function(w){return w.ml;}),backgroundColor:'#60a5fa',borderRadius:2,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:TC,font:{size:10}},grid:{display:false}},y:{ticks:{callback:function(v){return v+'%';},color:TC,font:{size:10}},grid:{color:GC}}}}});
+  setupEv(al,{days:mo.weeks.flatMap(function(w){return w.days;}),dates:mo.weeks.flatMap(function(w){return w.dates;})});
+}
+
+function buildPills(){
+  var pp=document.getElementById('pills'),items=mode==='week'?WK:MO;
+  pp.innerHTML=items.map(function(x){return'<button class="ppill'+(x.key===active?' on':'')+'" data-k="'+x.key+'">'+x.label+'</button>';}).join('');
+  pp.onclick=function(ev){var b=ev.target.closest('.ppill');if(!b)return;active=b.dataset.k;document.querySelectorAll('.ppill').forEach(function(x){x.classList.toggle('on',x.dataset.k===active);});refresh();};
+}
+function refresh(){
+  Object.values(ch).forEach(function(c){try{c.destroy();}catch(e){}});ch={};
+  if(mode==='week'){var wk=WK.find(function(w){return w.key===active;});if(wk)renderWeek(wk);}
+  else{var mo=MO.find(function(m){return m.key===active;});if(mo)renderMonth(mo);}
+}
+document.querySelector('.mode-btns').onclick=function(ev){
+  var b=ev.target.closest('.mbtn');if(!b)return;
+  mode=b.dataset.mode;
+  document.querySelectorAll('.mbtn').forEach(function(x){x.classList.toggle('on',x.dataset.mode===mode);});
+  active=mode==='week'?(WK.length?WK[WK.length-1].key:''):(MO.length?MO[MO.length-1].key:'');
+  buildPills();refresh();
+};
+load();
+</script>
+</body>
+</html>
